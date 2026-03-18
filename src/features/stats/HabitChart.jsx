@@ -1,10 +1,19 @@
-import HabitChart from "../features/stats/HabitChart";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
-function Stats({ habits }) {
+function HabitChart({ habits }) {
   const completedHabits = habits.filter((habit) => habit.completed).length;
   const incompleteHabits = habits.filter((habit) => !habit.completed).length;
 
   const today = new Date();
+
   const startOfToday = new Date(
     today.getFullYear(),
     today.getMonth(),
@@ -32,28 +41,27 @@ function Stats({ habits }) {
     return completedDate >= startOfWeek;
   }).length;
 
-  const completionRate =
-    habits.length === 0
-      ? 0
-      : Math.round((completedHabits / habits.length) * 100);
+  const chartData = [
+    { name: "Total", value: habits.length },
+    { name: "Completed", value: completedHabits },
+    { name: "Incomplete", value: incompleteHabits },
+    { name: "Today", value: completedToday },
+    { name: "This Week", value: completedThisWeek },
+  ];
 
   return (
-    <>
-      <div className="card">
-        <p>Total habits: {habits.length}</p>
-        <p>Completed habits: {completedHabits}</p>
-        <p>Incomplete habits: {incompleteHabits}</p>
-        <p>Completed today: {completedToday}</p>
-        <p>Completed this week: {completedThisWeek}</p>
-        <p>Completion rate: {completionRate}%</p>
-      </div>
-
-      <div className="card">
-        <h3>Habit Progress Chart</h3>
-        <HabitChart habits={habits} />
-      </div>
-    </>
+    <div style={{ width: "100%", height: 320 }}>
+      <ResponsiveContainer>
+        <BarChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis allowDecimals={false} />
+          <Tooltip />
+          <Bar dataKey="value" fill="#7c3ff6" />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
 
-export default Stats;
+export default HabitChart;
