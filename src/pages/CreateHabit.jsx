@@ -37,6 +37,7 @@ function CreateHabit({ habits, setHabits, editingHabit, onUpdateHabit }) {
         title: title.trim(),
         category: category.trim() || "General",
         completed: false,
+        completedAt: null,
       };
 
       setHabits([...habits, newHabit]);
@@ -57,7 +58,10 @@ function CreateHabit({ habits, setHabits, editingHabit, onUpdateHabit }) {
               id="title"
               type="text"
               value={title}
-              onChange={(event) => setTitle(event.target.value)}
+              onChange={(event) => {
+                setTitle(event.target.value);
+                setError("");
+              }}
             />
           </div>
 

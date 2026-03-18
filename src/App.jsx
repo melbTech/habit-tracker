@@ -16,9 +16,10 @@ function App() {
   const [title, setTitle] = useState("Habit Tracker");
 
   const location = useLocation();
+  const STORAGE_KEY = import.meta.env.VITE_STORAGE_KEY || "habits";
 
   useEffect(() => {
-    const storedHabits = localStorage.getItem("habits");
+    const storedHabits = localStorage.getItem(STORAGE_KEY);
 
     if (storedHabits && storedHabits !== "undefined") {
       try {
@@ -26,16 +27,16 @@ function App() {
         setHabits(parsedHabits);
       } catch (error) {
         console.error("Failed to parse habits from localStorage:", error);
-        localStorage.removeItem("habits");
+        localStorage.removeItem(STORAGE_KEY);
       }
     }
 
     setIsLoading(false);
-  }, []);
+  }, [STORAGE_KEY]);
 
   useEffect(() => {
     if (!isLoading) {
-      localStorage.setItem("habits", JSON.stringify(habits));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(habits));
     }
   }, [habits, isLoading]);
 
@@ -61,7 +62,11 @@ function App() {
     setHabits((currentHabits) =>
       currentHabits.map((habit) =>
         habit.id === habitId
-          ? { ...habit, completed: !habit.completed }
+          ? {
+              ...habit,
+              completed: !habit.completed,
+              completedAt: !habit.completed ? new Date().toISOString() : null,
+            }
           : habit,
       ),
     );
